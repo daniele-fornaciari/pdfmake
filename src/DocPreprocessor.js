@@ -57,6 +57,8 @@ class DocPreprocessor {
 			return this.preprocessQr(node);
 		} else if (node.pageReference || node.textReference) {
 			return this.preprocessText(node);
+		} else if (node.input) {
+			return this.preprocessInput(node);
 		} else {
 			throw new Error(`Unrecognized document structure: ${stringifyNode(node)}`);
 		}
@@ -243,6 +245,10 @@ class DocPreprocessor {
 	}
 
 	preprocessQr(node) {
+		return node;
+	}
+
+	preprocessInput(node) {
 		return node;
 	}
 

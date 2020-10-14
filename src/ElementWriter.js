@@ -324,6 +324,32 @@ class ElementWriter extends EventEmitter {
 		return true;
 	}
 
+	addInput(input) {
+		let height = 20; //input.getHeight();
+		let context = this.context();
+		let page = context.getCurrentPage();
+		let position = this.getCurrentPositionOnPage();
+
+		if (context.availableHeight < height || !page) {
+			return false;
+		}
+
+		input.x = context.x + (input.x || 0);
+		input.y = context.y + (input.y || 0);
+
+		// this.alignLine(input);
+
+		addPageItem(page, {
+			type: 'input',
+			item: input
+		});
+		this.emit('lineAdded', input);
+
+		context.moveDown(height);
+
+		return position;
+	}
+
 	/**
 	 * Pushes the provided context onto the stack or creates a new one
 	 *

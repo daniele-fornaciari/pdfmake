@@ -10,3 +10,6 @@ nbproject
 package-lock.json
 yarn.lock
 /js
+/build
+.vscode
+*.code-workspace

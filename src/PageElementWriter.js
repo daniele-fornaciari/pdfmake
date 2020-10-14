@@ -39,6 +39,10 @@ class PageElementWriter extends ElementWriter {
 		return super.addVector(vector, ignoreContextX, ignoreContextY, index);
 	}
 
+	addInput(input){
+		return this._fitOnPage(() => super.addInput(input));
+	}
+
 	beginClip(width, height) {
 		return super.beginClip(width, height);
 	}

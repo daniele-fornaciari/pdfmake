@@ -32,8 +32,26 @@ class Renderer {
 		this.progressCallback = progressCallback;
 	}
 
+	hasFormInput(pages){
+		for (let i = 0; i < pages.length; i++) {
+			let page = pages[i];
+			for (let ii = 0, il = page.items.length; ii < il; ii++) {
+				let item = page.items[ii];
+				if (item.type==='input')
+					return true;
+			}
+		}
+		return false;
+	}
+
 	renderPages(pages) {
-		this.pdfDocument._pdfMakePages = pages; // TODO: Why?
+		this.pdfDocument._pdfMakePages = pages; // TODO: Why?		
+
+		if (this.hasFormInput(pages)) {
+			this.pdfDocument.font('Helvetica');
+			this.pdfDocument.initForm();
+		}
+		
 		this.pdfDocument.addPage();
 
 		let totalItems = 0;
@@ -72,6 +90,9 @@ class Renderer {
 						break;
 					case 'endClip':
 						this.endClip();
+						break;
+					case 'input':
+						this.renderInput(item.item);
 						break;
 				}
 				renderedItems++;
@@ -304,6 +325,98 @@ class Renderer {
 
 	endClip() {
 		this.pdfDocument.restore();
+	}
+
+	renderInput(input) {
+/*		
+		function preparePageNodeRefLine(_pageNodeRef, inline) {
+			let newWidth;
+			let diffWidth;
+			let textInlines = new TextInlines(null);
+
+			if (_pageNodeRef.positions === undefined) {
+				throw new Error('Page reference id not found');
+			}
+
+			let pageNumber = _pageNodeRef.positions[0].pageNumber.toString();
+
+			inline.text = pageNumber;
+			newWidth = textInlines.widthOfText(inline.text, inline);
+			diffWidth = inline.width - newWidth;
+			inline.width = newWidth;
+
+			switch (inline.alignment) {
+				case 'right':
+					inline.x += diffWidth;
+					break;
+				case 'center':
+					inline.x += diffWidth / 2;
+					break;
+			}
+		}
+
+		if (line._pageNodeRef) {
+			preparePageNodeRefLine(line._pageNodeRef, line.inlines[0]);
+		}
+
+		x = x || 0;
+		y = y || 0;
+
+		let lineHeight = line.getHeight();
+		let ascenderHeight = line.getAscenderHeight();
+		let descent = lineHeight - ascenderHeight;
+
+		const textDecorator = new TextDecorator(this.pdfDocument);
+
+		textDecorator.drawBackground(line, x, y);
+
+		//TODO: line.optimizeInlines();
+		//TOOD: lines without differently styled inlines should be written to pdf as one stream
+		for (let i = 0, l = line.inlines.length; i < l; i++) {
+			let inline = line.inlines[i];
+			let shiftToBaseline = lineHeight - ((inline.font.ascender / 1000) * inline.fontSize) - descent;
+
+			if (inline._pageNodeRef) {
+				preparePageNodeRefLine(inline._pageNodeRef, inline);
+			}
+
+			let options = {
+				lineBreak: false,
+				textWidth: inline.width,
+				characterSpacing: inline.characterSpacing,
+				wordCount: 1,
+				link: inline.link
+			};
+
+			if (inline.linkToDestination) {
+				options.goTo = inline.linkToDestination;
+			}
+
+			if (line.id && i === 0) {
+				options.destination = line.id;
+			}
+
+			if (inline.fontFeatures) {
+				options.features = inline.fontFeatures;
+			}
+
+			let opacity = isNumber(inline.opacity) ? inline.opacity : 1;
+			this.pdfDocument.opacity(opacity);
+			this.pdfDocument.fill(inline.color || 'black');
+
+			this.pdfDocument._font = inline.font;
+			this.pdfDocument.fontSize(inline.fontSize);
+			this.pdfDocument.text(inline.text, x + inline.x, y + shiftToBaseline, options);
+
+			if (inline.linkToPage) {
+				this.pdfDocument.ref({ Type: 'Action', S: 'GoTo', D: [inline.linkToPage, 0, 0] }).end();
+				this.pdfDocument.annotate(x + inline.x, y + shiftToBaseline, inline.width, inline.height, { Subtype: 'Link', Dest: [inline.linkToPage - 1, 'XYZ', null, null, null] });
+			}
+		}
+
+		textDecorator.drawDecorations(line, x, y);
+*/
+		this.pdfDocument.formAnnotation(input.name, input.type, input.x, input.y, 100, 20);
 	}
 
 	renderWatermark(page) {

@@ -8,6 +8,7 @@ var fc2json = require('gulp-file-contents-to-json');
 var log = require('fancy-log');
 var exec = require('child_process').exec;
 const fs = require('fs');
+const sourcemaps = require('gulp-sourcemaps');
 
 var DEBUG = process.env.NODE_ENV === 'debug';
 var CI = process.env.CI === 'true';
@@ -17,6 +18,7 @@ var vfsAfter = "; if (typeof this.pdfMake !== 'undefined' && typeof this.pdfMake
 
 gulp.task('buildNode', function () {
 	return gulp.src('src/**/*.js')
+		.pipe(sourcemaps.init())
 		.pipe(babel({
 			presets: [
 				[
@@ -30,6 +32,7 @@ gulp.task('buildNode', function () {
 				]
 			]
 		}))
+		.pipe(sourcemaps.write('./src', {sourceRoot: './src'}))
 		.pipe(gulp.dest("js"));
 });
 
@@ -93,8 +96,8 @@ gulp.task('buildFonts', function () {
 });
 
 gulp.task('watch', function () {
-	gulp.watch('./src/**', ['test', 'build']);
-	gulp.watch('./tests/**', ['test']);
+	gulp.watch('./src/**', gulp.series('buildNode'));
+//	gulp.watch('./tests/**', ['test']);
 });
 
 gulp.task('generateExamples', function (cb) {
@@ -126,6 +129,7 @@ gulp.task('generateExamples', function (cb) {
 	});
 });
 
-gulp.task('build', gulp.series('buildNode', 'buildBrowser'));
+gulp.task('build', gulp.series('buildNode'));
+//gulp.task('build', gulp.series('buildNode', 'buildBrowser'));
 
 gulp.task('default', gulp.series('build', 'buildFonts', 'test', 'lint'));

@@ -78,7 +78,7 @@ class LayoutBuilder {
 				[
 					'id', 'text', 'ul', 'ol', 'table', 'image', 'qr', 'canvas', 'svg', 'columns',
 					'headlineLevel', 'style', 'pageBreak', 'pageOrientation',
-					'width', 'height'
+					'width', 'height', 'input'
 				].forEach(key => {
 					if (node[key] !== undefined) {
 						nodeInfo[key] = node[key];
@@ -424,6 +424,8 @@ class LayoutBuilder {
 				this.processCanvas(node);
 			} else if (node.qr) {
 				this.processQr(node);
+			} else if (node.input) {
+				this.processInput(node);
 			} else if (!node._span) {
 				throw new Error(`Unrecognized document structure: ${stringifyNode(node)}`);
 			}
@@ -757,6 +759,12 @@ class LayoutBuilder {
 
 	processQr(node) {
 		let position = this.writer.addQr(node);
+		node.positions.push(position);
+	}
+
+	processInput(node) {
+		if (!node.input.type) throw 'missing <type> in node Input';
+		let position = this.writer.addInput(node.input);
 		node.positions.push(position);
 	}
 }

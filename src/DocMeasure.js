@@ -693,8 +693,10 @@ class DocMeasure {
 	}
 
 	measureInput(node) {
-		node._width = node._minWidth = node._maxWidth = 100;
-		node._height = node._minHeight = node._maxHeight = 20;
+		let _w = node.input.options && node.input.options.width ? node.input.options.width : 100;
+		let _h = node.input.options && node.input.options.height ? node.input.options.height : 20;
+		node._width = node._minWidth = node._maxWidth = _w;
+		node._height = node._minHeight = node._maxHeight = _h;
 		return node;
 	}
 }

@@ -325,7 +325,7 @@ class ElementWriter extends EventEmitter {
 	}
 
 	addInput(input) {
-		let height = 20; //input.getHeight();
+		let height = input.options && input.options.height ? input.options.height : 20;
 		let context = this.context();
 		let page = context.getCurrentPage();
 		let position = this.getCurrentPositionOnPage();
@@ -334,8 +334,10 @@ class ElementWriter extends EventEmitter {
 			return false;
 		}
 
-		input.x = context.x + (input.x || 0);
-		input.y = context.y + (input.y || 0);
+		input.x = context.x + (input.options && input.options.left ? input.options.left : 0);
+		input.y = context.y + (input.options && input.options.top ? input.options.top : 0);
+		input.h = input.options && input.options.height ? input.options.height : 20;
+		input.w = input.options && input.options.width ? input.options.width : 100;
 
 		// this.alignLine(input);
 

@@ -416,7 +416,7 @@ class Renderer {
 
 		textDecorator.drawDecorations(line, x, y);
 */
-		this.pdfDocument.formAnnotation(input.name, input.type, input.x, input.y, 100, 20);
+		this.pdfDocument.formAnnotation(input.name, input.type, input.x, input.y, input.w, input.h);
 	}
 
 	renderWatermark(page) {
